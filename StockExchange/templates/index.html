@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <link href="../static/content/css/css/kendo.bootstrap-v4.min.css" rel="stylesheet" />
+<script src="../static/scripts/jquery-1.10.2.min.js"></script>
+<script src="../static/scripts/kendo.all.min.js"></script>
+<style>
+    #companyname-list > span > input{
+        min-width : 100% !important;
+    }
+</style>
+<div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <input id="companyname" style="width:100% " />
+            </div>
+            <div class="col-lg-12">
+                <div class="card" style="width: 18rem;" id="cmpnyName">
+                    <div class="card-body">
+                        <h5 class="card-title">Company Name</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function () {
+
+        //Init Variables
+        var selectedItem;
+
+        //Init Company Name Lists Dropdown list
+        $("#companyname").kendoDropDownList({
+            dataTextField: "Value",
+            dataValueField: "Key",
+            filter: 'contains',
+            optionLabel: "Select Company Name",
+            select: function (e) {
+                selectedItem = e.dataItem.Key;
+
+                setInterval(function onChange() {
+                    getStockQuotes(selectedItem);
+                }, 3000);
+
+            }
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: "{{url_for('stockcodes')}}",
+            dataType: 'json',
+            data: { 'code': '' },
+            success: function (succ) {
+                var stkCodeLists = $("#companyname").data('kendoDropDownList');
+                stkCodeLists.setDataSource(succ.nseLists);
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        });
+
+
+    });
+
+    function getStockQuotes(selectedCompany) {
+        $.ajax({
+            type: 'POST',
+            url: "{{url_for('company')}}",
+            dataType: 'json',
+            data: { 'code': selectedCompany },
+            success: function (succ) {
+                console.log(succ)
+                var companyName = succ["Company Name"];
+                var symbol = succ["Symbol"];
+
+                $("#cmpnyName .card-text").text(companyName);
+
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        });
+    }
+</script>
+    {% endblock %}
