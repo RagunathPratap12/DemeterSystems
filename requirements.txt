@@ -5,7 +5,7 @@ Jinja2==2.11.2
 nsepy==0.8
 Werkzeug==1.0.1
 nsetools==1.0.11
-pip==20.1
+pip==21.1
 requests==2.23.0
 asgiref==3.2.7
 beautifulsoup4==4.9.0
